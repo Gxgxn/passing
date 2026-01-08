@@ -1,65 +1,71 @@
-import Image from "next/image";
+'use client'
+
+import Link from 'next/link'
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-zinc-950">
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 text-center px-6 max-w-2xl">
+        {/* Logo/Brand */}
+        <div className="mb-12">
+          <h1 className="text-6xl md:text-9xl font-thin tracking-[0.5em] text-white/90 mb-2 scale-y-90">
+            PASSING
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+          <div className="h-px w-48 mx-auto bg-gradient-to-r from-transparent via-white/50 to-transparent" />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* Tagline */}
+        <p className="text-lg md:text-xl text-zinc-400 font-light leading-relaxed mb-16">
+          Some moments exist only once.
+          <br />
+          <span className="text-zinc-500">This is one of them.</span>
+        </p>
+
+        {/* CTA Button */}
+        <Link 
+          href="/exclusive"
+          className="group relative inline-flex items-center gap-3 px-8 py-4 border border-white/20 rounded-full text-white/80 hover:text-white hover:border-white/40 transition-all duration-500 backdrop-blur-sm"
+        >
+          <span className="text-sm tracking-[0.2em] uppercase font-light">
+            Enter the moment
+          </span>
+          <svg 
+            className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+          
+          {/* Glow effect on hover */}
+          <div className="absolute inset-0 rounded-full bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+        </Link>
+
+        {/* Warning */}
+        <p className="mt-16 text-xs text-zinc-600 tracking-wider uppercase">
+          You will not be able to return
+        </p>
+      </div>
+
+      {/* Decorative elements */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-1">
+        {[...Array(3)].map((_, i) => (
+          <div 
+            key={i} 
+            className="w-1 h-1 rounded-full bg-zinc-700 animate-pulse"
+            style={{ animationDelay: `${i * 200}ms` }}
+          />
+        ))}
+      </div>
+    </main>
+  )
 }
