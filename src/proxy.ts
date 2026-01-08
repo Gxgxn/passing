@@ -13,14 +13,13 @@ async function generateFingerprint(request: NextRequest): Promise<string> {
   const realIp = request.headers.get('x-real-ip');
   const ip = forwarded ? forwarded.split(',')[0].trim() : (realIp ?? '127.0.0.1');
 
-  // Get structured UA data (browser name, version, OS, etc.)
-  const { ua, browser, os, device } = userAgent(request);
+  // Get structured UA data for OS/Device detection only
+  const { os, device } = userAgent(request);
   
-  // Language settings add entropy
-  const acceptLanguage = request.headers.get('accept-language') ?? 'unknown';
-
-  // Concatenate signals into a single string for hashing
-  const rawSignature = `${ip}|${ua}|${browser.name}|${os.name}|${device.model}|${acceptLanguage}`;
+  // ROBUST FINGERPRINT: IP + OS + Device
+  // We explicitly ignore browser name, version, and raw UA string 
+  // to ensure the lock persists if the user switches browsers (e.g. Chrome -> Firefox)
+  const rawSignature = `${ip}|${os.name}|${device.model}`;
 
   // Hash the signature using SHA-256
   const msgUint8 = new TextEncoder().encode(rawSignature);
