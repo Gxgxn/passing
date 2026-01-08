@@ -32,40 +32,51 @@ async function generateFingerprint(request: NextRequest): Promise<string> {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only intercept /exclusive route
-  if (pathname === '/exclusive') {
+  const isExclusive = pathname === '/exclusive';
+  const isHome = pathname === '/';
+
+  // Intercept both Home and Exclusive routes
+  if (isExclusive || isHome) {
     const fingerprint = await generateFingerprint(request);
     const cookie = request.cookies.get('visited');
-
-    // Check Redis for this specific device fingerprint
+    
+    // Check lock status
     let hasVisitedBefore = false;
     try {
       hasVisitedBefore = !!(await redis.get(`fp:${fingerprint}`));
     } catch (error) {
       console.error('Redis error:', error);
-      // Continue with cookie-only check if Redis fails
     }
 
-    // Double-lock: either cookie OR fingerprint blocks access
-    if (cookie || hasVisitedBefore) {
+    const isLocked = !!(cookie || hasVisitedBefore);
+
+    // If locked, block access to BOTH Home and Exclusive
+    if (isLocked) {
       return NextResponse.redirect(new URL('/expired', request.url));
     }
 
-    // Set persistence in Redis
-    try {
-      await redis.set(`fp:${fingerprint}`, 'true', { ex: 60 * 60 * 24 * 180 }); // ~180 days
-    } catch (error) {
-      console.error('Redis set error:', error);
-    }
-
-    // Set cookie and allow access
+    // If NOT locked:
+    // 1. Home: Allow access (Open State)
+    // 2. Exclusive: Set Lock (Closing the door behind you)
+    
     const response = NextResponse.next();
-    response.cookies.set('visited', 'true', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 365, // 1 year
-    });
+
+    if (isExclusive) {
+      // Set persistence in Redis
+      try {
+        await redis.set(`fp:${fingerprint}`, 'true', { ex: 60 * 60 * 24 * 365 }); // 1 year TTL
+      } catch (error) {
+        console.error('Redis set error:', error);
+      }
+
+      // Set cookie
+      response.cookies.set('visited', 'true', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+      });
+    }
 
     return response;
   }
