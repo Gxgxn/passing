@@ -11,13 +11,13 @@ async function generateFingerprint(request: NextRequest): Promise<string> {
   // Extract IP from headers (x-forwarded-for is set by Vercel and most proxies)
   const forwarded = request.headers.get('x-forwarded-for');
   const realIp = request.headers.get('x-real-ip');
-  const ip = forwarded ? forwarded.split(',')[0].trim() : (realIp ?? '127.0.0.1');
+  const ip = forwarded ? forwarded.split(',')[0].trim() : realIp ?? '127.0.0.1';
 
   // Get structured UA data for OS/Device detection only
   const { os, device } = userAgent(request);
-  
+
   // ROBUST FINGERPRINT: IP + OS + Device
-  // We explicitly ignore browser name, version, and raw UA string 
+  // We explicitly ignore browser name, version, and raw UA string
   // to ensure the lock persists if the user switches browsers (e.g. Chrome -> Firefox)
   const rawSignature = `${ip}|${os.name}|${device.model}`;
 
@@ -53,7 +53,7 @@ export async function proxy(request: NextRequest) {
 
     // Set persistence in Redis
     try {
-      await redis.set(`fp:${fingerprint}`, 'true', { ex: 60 * 60 * 24 * 365 }); // 1 year TTL
+      await redis.set(`fp:${fingerprint}`, 'true', { ex: 60 * 60 * 24 * 180 }); // ~180 days
     } catch (error) {
       console.error('Redis set error:', error);
     }
@@ -74,5 +74,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/exclusive',
+  matcher: ['/', '/exclusive'],
 };
