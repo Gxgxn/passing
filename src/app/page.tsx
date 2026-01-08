@@ -16,9 +16,15 @@ export default function Home() {
       <div className="relative z-10 text-center px-6 max-w-2xl">
         {/* Logo/Brand */}
         <div className="mb-12">
-          <h1 className="text-6xl md:text-9xl font-thin tracking-[0.5em] text-white/90 mb-2 scale-y-90">
-            PASSING
+          <h1 className="text-6xl md:text-8xl  text-white/80 mb-2 scale-y-90 font-[outfit] tracking-wide ml-6">
+            PASSING 
+          <span className="text-white/80 position-absolute text-5xl">
+            <span className="animate-pulse inline">.</span>
+            <span className="animate-pulse inline" style={{ animationDelay: '200ms' }}>.</span>
+            <span className="animate-pulse inline" style={{ animationDelay: '400ms' }}>.</span>
+          </span>
           </h1>
+
           <div className="h-px w-48 mx-auto bg-gradient-to-r from-transparent via-white/50 to-transparent" />
         </div>
 
