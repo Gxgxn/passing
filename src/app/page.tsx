@@ -62,16 +62,7 @@ export default function Home() {
         </p>
       </div>
 
-      {/* Decorative elements */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-1">
-        {[...Array(3)].map((_, i) => (
-          <div 
-            key={i} 
-            className="w-1 h-1 rounded-full bg-zinc-700 animate-pulse"
-            style={{ animationDelay: `${i * 200}ms` }}
-          />
-        ))}
-      </div>
+     
     </main>
   )
 }
