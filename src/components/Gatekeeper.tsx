@@ -11,18 +11,24 @@ export default function Gatekeeper({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     const checkFingerprint = async () => {
-      // 1. Initialize FingerprintJS agent
-      const fp = await FingerprintJS.load()
+      try {
+        // 1. Initialize FingerprintJS agent
+        const fp = await FingerprintJS.load()
 
-      // 2. Get the visitor identifier
-      const { visitorId } = await fp.get()
+        // 2. Get the visitor identifier
+        const { visitorId } = await fp.get()
 
-      // 3. Verify with server
-      const result = await verifyVisitor(visitorId)
+        // 3. Verify with server
+        const result = await verifyVisitor(visitorId)
 
-      if (result === 'ALLOWED') {
-        setIsVerified(true)
-      } else {
+        if (result === 'ALLOWED') {
+          setIsVerified(true)
+        } else {
+          router.push('/expired')
+        }
+      } catch (error) {
+        console.error('Fingerprint verification failed:', error)
+        // On error, redirect to expired as a safety measure
         router.push('/expired')
       }
     }
